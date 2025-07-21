@@ -52,3 +52,5 @@ $RECYCLE.BIN/
 .idea/
 .history/
 IlluminatedCloud/
+.pmdcache
+scripts/apex/hello.apex

@@ -41,6 +41,8 @@ public class JSONPlaceholderExercise {
     // the remote site to accept Salesforce's JSON formatting
     request.setHeader('Content-Type', 'application/json');
     request.setHeader('User-Agent', 'Salesforce/1.0');
+    // set timeout to 100 seconds
+    request.setTimeout(100000);
     HttpResponse resp = h.send(request);
     String responseMsg = '';
     // if the Status Code indicates the site accepted it,
@@ -87,6 +89,8 @@ public class JSONPlaceholderExercise {
     request.setMethod('POST');
     request.setHeader('Content-Type', 'application/json');
     request.setHeader('User-Agent', 'Salesforce/1.0');
+    // set timeout to 100 seconds
+    request.setTimeout(100000);
     // Create the object
     Placeholder placehldr = new Placeholder(null, title, body, userId);
     // serialize it and remove null values
@@ -137,6 +141,8 @@ public class JSONPlaceholderExercise {
     request.setHeader('Content-Type', 'application/json');
     request.setHeader('User-Agent', 'Salesforce/1.0');
     // Create the object with all values
+    // set timeout to 100 seconds
+    request.setTimeout(100000);
     Placeholder placehldr = new Placeholder(postId, title, body, userId);
     // serialize it
     request.setBody(JSON.serializePretty(placehldr));
@@ -178,6 +184,8 @@ public class JSONPlaceholderExercise {
     request.setMethod('PATCH');
     request.setHeader('Content-Type', 'application/json');
     request.setHeader('User-Agent', 'Salesforce/1.0');
+    // set timeout to 100 seconds
+    request.setTimeout(100000);
     // Create the object with only one value, nulls for the rest
     Placeholder placehldr = new Placeholder(null, title, null, null);
     // Serialize the one value and suppress the nulls
@@ -217,6 +225,8 @@ public class JSONPlaceholderExercise {
     request.setMethod('DELETE');
     request.setHeader('Content-Type', 'application/json');
     request.setHeader('User-Agent', 'Salesforce/1.0');
+    // set timeout to 100 seconds
+    request.setTimeout(100000);
     HttpResponse resp = h.send(request);
     return resp.getStatusCode();
   }
