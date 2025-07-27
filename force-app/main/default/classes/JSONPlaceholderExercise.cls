@@ -3,7 +3,9 @@ public class JSONPlaceholderExercise {
   // site to accept my formatted JSON, so instead I
   // decided to create a class to create Objects and
   // then use the Apex JSON class to format them for me
-
+  private static final String BASE_URL = 'https://jsonplaceholder.typicode.com';
+  // set timeout to 12 seconds, a little longer than the default
+  private static final Integer TIMEOUT = 12000;
   private class Placeholder {
     public Integer postId { private set; }
     public String title { private set; }
@@ -23,8 +25,6 @@ public class JSONPlaceholderExercise {
     }
   }
 
-  private static final String BASE_URL = 'https://jsonplaceholder.typicode.com';
-
   /**
    * Exercise 1: Implement a GET request to fetch a post by ID
    * Endpoint: /posts/{postId}
@@ -32,7 +32,6 @@ public class JSONPlaceholderExercise {
    * @return String - The JSON response from the API
    */
   public static String getPostById(Integer postId) {
-    // TODO: Student Implementation
     Http h = new Http();
     HttpRequest request = new HttpRequest();
     request.setEndpoint(BASE_URL + '/posts/' + postId);
@@ -41,29 +40,13 @@ public class JSONPlaceholderExercise {
     // the remote site to accept Salesforce's JSON formatting
     request.setHeader('Content-Type', 'application/json');
     request.setHeader('User-Agent', 'Salesforce/1.0');
-    // set timeout to 100 seconds
-    request.setTimeout(100000);
+    // set timeout to variable
+    request.setTimeout(TIMEOUT);
     HttpResponse resp = h.send(request);
-    String responseMsg = '';
-    // if the Status Code indicates the site accepted it,
-    // get the response
-    if (resp.getStatusCode().toString().startsWith('2')) {
-      responseMsg = resp.getBody();
-    } else {
-      // otherwise return the error status and code
-      responseMsg =
-        'Error received from endpoint; Status: ' +
-        resp.getStatusCode() +
-        '; ' +
-        resp.getStatus();
-    }
+    ApiResponse apiResponse = new ApiResponse(resp);
+    String responseMsg = apiResponse.getResponseFromStatus();
+    System.debug(responseMsg);
     return responseMsg;
-
-    // 1. Create a new HTTP request
-    // 2. Set the endpoint URL using BASE_URL + '/posts/' + postId
-    // 3. Set the HTTP method to 'GET'
-    // 4. Send the request and get the response
-    // 5. Return the response body as string
   }
 
   /**
@@ -75,39 +58,22 @@ public class JSONPlaceholderExercise {
    * @return String - The JSON response from the API
    */
   public static String createPost(String title, String body, Integer userId) {
-    // TODO: Student Implementation
-    // 1. Create a new HTTP request
-    // 2. Set the endpoint URL using BASE_URL + '/posts'
-    // 3. Set the HTTP method to 'POST'
-    // 4. Create a JSON string with the post data
-    // 5. Set the request body
-    // 6. Send the request and get the response
-    // 7. Return the response body as string
     Http h = new Http();
     HttpRequest request = new HttpRequest();
     request.setEndpoint(BASE_URL + '/posts');
     request.setMethod('POST');
     request.setHeader('Content-Type', 'application/json');
     request.setHeader('User-Agent', 'Salesforce/1.0');
-    // set timeout to 100 seconds
-    request.setTimeout(100000);
+    // set timeout to variable
+    request.setTimeout(TIMEOUT);
     // Create the object
-    Placeholder placehldr = new Placeholder(null, title, body, userId);
+    Placeholder placeholder = new Placeholder(null, title, body, userId);
     // serialize it and remove null values
-    request.setBody(JSON.serialize(placehldr, true));
+    request.setBody(JSON.serialize(placeholder, true));
     HttpResponse resp = h.send(request);
-    String responseMsg = '';
-    // get the response as either the correct message or indication
-    // of what went wrong
-    if (resp.getStatusCode().toString().startsWith('2')) {
-      responseMsg = resp.getBody();
-    } else {
-      responseMsg =
-        'Error received from endpoint; Status: ' +
-        resp.getStatusCode() +
-        '; ' +
-        resp.getStatus();
-    }
+    ApiResponse apiResponse = new ApiResponse(resp);
+    String responseMsg = apiResponse.getResponseFromStatus();
+    System.debug(responseMsg);
     return responseMsg;
   }
 
@@ -126,14 +92,6 @@ public class JSONPlaceholderExercise {
     String body,
     Integer userId
   ) {
-    // TODO: Student Implementation
-    // 1. Create a new HTTP request
-    // 2. Set the endpoint URL using BASE_URL + '/posts/' + postId
-    // 3. Set the HTTP method to 'PUT'
-    // 4. Create a JSON string with the updated post data
-    // 5. Set the request body
-    // 6. Send the request and get the response
-    // 7. Return the response body as string
     Http h = new Http();
     HttpRequest request = new HttpRequest();
     request.setEndpoint(BASE_URL + '/posts/' + postId);
@@ -141,24 +99,15 @@ public class JSONPlaceholderExercise {
     request.setHeader('Content-Type', 'application/json');
     request.setHeader('User-Agent', 'Salesforce/1.0');
     // Create the object with all values
-    // set timeout to 100 seconds
-    request.setTimeout(100000);
-    Placeholder placehldr = new Placeholder(postId, title, body, userId);
+    // set timeout to variable
+    request.setTimeout(TIMEOUT);
+    Placeholder placeholder = new Placeholder(postId, title, body, userId);
     // serialize it
-    request.setBody(JSON.serializePretty(placehldr));
+    request.setBody(JSON.serialize(placeholder, true));
     HttpResponse resp = h.send(request);
-    String responseMsg = '';
-    // get the response as either the correct message or indication
-    // of what went wrong
-    if (resp.getStatusCode().toString().startsWith('2')) {
-      responseMsg = resp.getBody();
-    } else {
-      responseMsg =
-        'Error received from endpoint; Status: ' +
-        resp.getStatusCode() +
-        '; ' +
-        resp.getStatus();
-    }
+    ApiResponse apiResponse = new ApiResponse(resp);
+    String responseMsg = apiResponse.getResponseFromStatus();
+    System.debug(responseMsg);
     return responseMsg;
   }
 
@@ -170,39 +119,22 @@ public class JSONPlaceholderExercise {
    * @return String - The JSON response from the API
    */
   public static String patchPostTitle(Integer postId, String title) {
-    // TODO: Student Implementation
-    // 1. Create a new HTTP request
-    // 2. Set the endpoint URL using BASE_URL + '/posts/' + postId
-    // 3. Set the HTTP method to 'PATCH'
-    // 4. Create a JSON string with only the title
-    // 5. Set the request body
-    // 6. Send the request and get the response
-    // 7. Return the response body as string
     Http h = new Http();
     HttpRequest request = new HttpRequest();
     request.setEndpoint(BASE_URL + '/posts/' + postId);
     request.setMethod('PATCH');
     request.setHeader('Content-Type', 'application/json');
     request.setHeader('User-Agent', 'Salesforce/1.0');
-    // set timeout to 100 seconds
-    request.setTimeout(100000);
+    // set timeout to 12 seconds
+    request.setTimeout(TIMEOUT);
     // Create the object with only one value, nulls for the rest
-    Placeholder placehldr = new Placeholder(null, title, null, null);
+    Placeholder placeholder = new Placeholder(null, title, null, null);
     // Serialize the one value and suppress the nulls
-    request.setBody(JSON.serialize(placehldr, true));
+    request.setBody(JSON.serialize(placeholder, true));
     HttpResponse resp = h.send(request);
-    String responseMsg = '';
-    // get the response as either the correct message or indication
-    // of what went wrong
-    if (resp.getStatusCode().toString().startsWith('2')) {
-      responseMsg = resp.getBody();
-    } else {
-      responseMsg =
-        'Error received from endpoint; Status: ' +
-        resp.getStatusCode() +
-        '; ' +
-        resp.getStatus();
-    }
+    ApiResponse apiResponse = new ApiResponse(resp);
+    String responseMsg = apiResponse.getResponseFromStatus();
+    System.debug(responseMsg);
     return responseMsg;
   }
 
@@ -213,12 +145,6 @@ public class JSONPlaceholderExercise {
    * @return Integer - The HTTP status code from the response
    */
   public static Integer deletePost(Integer postId) {
-    // TODO: Student Implementation
-    // 1. Create a new HTTP request
-    // 2. Set the endpoint URL using BASE_URL + '/posts/' + postId
-    // 3. Set the HTTP method to 'DELETE'
-    // 4. Send the request and get the response
-    // 5. Return the response status code
     Http h = new Http();
     HttpRequest request = new HttpRequest();
     request.setEndpoint(BASE_URL + '/posts/' + postId);
@@ -226,7 +152,7 @@ public class JSONPlaceholderExercise {
     request.setHeader('Content-Type', 'application/json');
     request.setHeader('User-Agent', 'Salesforce/1.0');
     // set timeout to 100 seconds
-    request.setTimeout(100000);
+    request.setTimeout(TIMEOUT);
     HttpResponse resp = h.send(request);
     return resp.getStatusCode();
   }
